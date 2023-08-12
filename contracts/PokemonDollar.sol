@@ -14,19 +14,19 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * This is the contract meant to be governed by DSCEngine. This contract is just the ERC20 implementation of our stablecoin system
  */
 contract PokemonDollar is ERC20Burnable, Ownable {
-    error PokemonDollar_MustBeMoreThanZero();
-    error PokemonDollar_BurnAmountExceedsBalance();
-    error PokemonDollar_NotZeroAddress();
+    error PokemonDollar__MustBeMoreThanZero();
+    error PokemonDollar__BurnAmountExceedsBalance();
+    error PokemonDollar__NotZeroAddress();
 
     constructor() ERC20("PokemonDollar", "PD") {}
 
     function burn(uint256 _amount) public override onlyOwner {
         uint256 balance = balanceOf(msg.sender);
         if (_amount <= 0) {
-            revert PokemonDollar_MustBeMoreThanZero();
+            revert PokemonDollar__MustBeMoreThanZero();
         }
         if (balance < _amount) {
-            revert PokemonDollar_BurnAmountExceedsBalance();
+            revert PokemonDollar__BurnAmountExceedsBalance();
         }
         super.burn(_amount);
     }
@@ -36,10 +36,10 @@ contract PokemonDollar is ERC20Burnable, Ownable {
         uint256 _amount
     ) external onlyOwner returns (bool) {
         if (_to == address(0)) {
-            revert PokemonDollar_NotZeroAddress();
+            revert PokemonDollar__NotZeroAddress();
         }
         if (_amount <= 0) {
-            revert PokemonDollar_MustBeMoreThanZero();
+            revert PokemonDollar__MustBeMoreThanZero();
         }
         _mint(_to, _amount);
         return true;
