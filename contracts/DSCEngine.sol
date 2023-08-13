@@ -32,16 +32,22 @@ contract DSCEngine is ReentrancyGuard {
     error DSCEngine__NotAllowedToken();
     error DSCEngine__Transferfailed();
     error DSCEngine__MintFailed();
+    error DSCEngine__BreaksHealthFactor(uint256 healthFactor);
 
     /////////////////////
     // State Variables //
     /////////////////////
     uint256 private constant ADDITIONAL_FEED_PRECISION = 1e10;
     uint256 private constant PRECISION = 1e18;
+    uint256 private constant LIQUIDATION_THRESHOLD = 50; //200% overcollateralized
+    uint256 private constant LIQUIDATION_PRECISION = 100;
+    uint256 private constant MIN_HEALTH_FACTOR = 1;
+
     mapping(address token => address priceFeed) private s_priceFeeds; // tokenToPriceFeed
     mapping(address user => mapping(address token => uint256 amount))
         private s_collateralDeposited;
     mapping(address user => uint256 amountPdMinted) private s_PdMinted;
+
     address[] private s_collateralTokens;
     PokemonDollar private immutable i_pd;
 
@@ -165,34 +171,50 @@ contract DSCEngine is ReentrancyGuard {
     // Private & Internal View Functions //
     ///////////////////////////////////////
 
-    function _getAccountInformation(
-        address user
+    function getAccountInformation(
+        address _user
     )
         private
         view
         returns (uint256 totalPdMinted, uint256 collateralValueInUsd)
     {
-        totalPdMinted = s_PdMinted[user];
-        collateralValueInUsd = getAccountCollateralValue(user);
+        totalPdMinted = s_PdMinted[_user];
+        collateralValueInUsd = getAccountCollateralValue(_user);
+    }
+
+    function calculateHealthFactor(
+        uint256 _totalDscMinted,
+        uint256 _collateralValueInUsd
+    ) internal pure returns (uint256) {
+        if (_totalDscMinted == 0) return type(uint256).max;
+        uint256 collateralAdjustedForThreshold = (_collateralValueInUsd *
+            LIQUIDATION_THRESHOLD) / LIQUIDATION_PRECISION;
+        // 1,000 ETH * 50 = 50,000 / 100 = 500
+        // $150 ETH / 100 DSC = 1.5
+        // 150 * 50 = 7,500 / 100 = (75 / 100) < 1
+
+        // $1,000 ETH / 100 DSC
+        // 1,000 * 50 = 50,000 / 100 = (500 / 100) > 1
+        return (collateralAdjustedForThreshold * PRECISION) / _totalDscMinted;
     }
 
     /*
      * Returns how close to liquidation a user is.
      * If a user goes below 1, then they can get liquidated
      */
-    function healthFactor(address user) private view returns (uint256) {
-        // (
-        //     uint256 totalDscMinted,
-        //     uint256 collateralValueInUsd
-        // ) = _getAccountInformation(user);
-        // return _calculateHealthFactor(totalDscMinted, collateralValueInUsd);
+    function healthFactor(address _user) private view returns (uint256) {
+        (
+            uint256 totalDscMinted,
+            uint256 collateralValueInUsd
+        ) = getAccountInformation(_user);
+        return calculateHealthFactor(totalDscMinted, collateralValueInUsd);
     }
 
-    function revertIfHealthFactorIsBroken(address user) internal view {
-        // uint256 userHealthFactor = _healthFactor(user);
-        // if (userHealthFactor < MIN_HEALTH_FACTOR) {
-        //     revert DSCEngine__BreaksHealthFactor(userHealthFactor);
-        // }
+    function revertIfHealthFactorIsBroken(address _user) internal view {
+        uint256 userHealthFactor = healthFactor(_user);
+        if (userHealthFactor < MIN_HEALTH_FACTOR) {
+            revert DSCEngine__BreaksHealthFactor(userHealthFactor);
+        }
     }
 
     //////////////////////////////////////
@@ -200,11 +222,11 @@ contract DSCEngine is ReentrancyGuard {
     //////////////////////////////////////
 
     function getAccountCollateralValue(
-        address user
+        address _user
     ) public view returns (uint256 totalCollateralValueInUsd) {
         for (uint256 i = 0; i < s_collateralTokens.length; i++) {
             address token = s_collateralTokens[i];
-            uint256 amount = s_collateralDeposited[user][token];
+            uint256 amount = s_collateralDeposited[_user][token];
             totalCollateralValueInUsd += getUsdValue(token, amount);
         }
         return totalCollateralValueInUsd;
