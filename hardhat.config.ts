@@ -1,4 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
+import "hardhat-deploy";
+import "hardhat-contract-sizer";
+import "dotenv/config";
 import "@nomicfoundation/hardhat-toolbox";
 
 const providerApiKey =

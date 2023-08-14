@@ -7,5 +7,13 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "./hardhat.config.ts",
+    "./scripts",
+    "./test",
+    "./deploy",
+    "./deploy-helpers"
+  ],
+  "files": ["./hardhat.config.ts", "./helper-hardhat-config.ts"]
 }
