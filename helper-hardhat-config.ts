@@ -2,6 +2,10 @@
 import { ethers } from "hardhat";
 
 export interface networkConfigItem {
+  wethUsdPriceFeed?: string;
+  wbtcUsdPriceFeed?: string;
+  weth?: string;
+  wbtc?: string;
   name?: string;
   subscriptionId?: string;
   gasLane?: string;
@@ -30,6 +34,16 @@ export const networkConfig: networkConfigInfo = {
   //     mintFee: "10000000000000000", // 0.01 ETH
   //     // interval: "30",
   // },
+  11155111: {
+    name: "sepolia",
+    lotteryEntranceFee: "10000000000000000", // 0.01 ETH
+    gasLane:
+      "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
+    keepersUpdateInterval: "60",
+    callbackGasLimit: "500000", // 500,000 gas
+    subscriptionId: "6727",
+    // interval: "30",
+  },
   31337: {
     name: "localhost",
     lotteryEntranceFee: "10000000000000000", // 0.01 ETH
