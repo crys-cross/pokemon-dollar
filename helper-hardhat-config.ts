@@ -1,5 +1,7 @@
 // Edit for multichain addresses
+// sepolia, ethereum, polygon, fantom, avalanche, binance, arbitrum
 import { ethers } from "hardhat";
+// import { ethers } from "ethers";
 
 export interface networkConfigItem {
   wethUsdPriceFeed?: string;
@@ -35,6 +37,10 @@ export const networkConfig: networkConfigInfo = {
   //     // interval: "30",
   // },
   11155111: {
+    wethUsdPriceFeed: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
+    wbtcUsdPriceFeed: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
+    weth: "0xdd13E55209Fd76AfE204dBda4007C227904f0a81",
+    wbtc: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
     name: "sepolia",
     lotteryEntranceFee: "10000000000000000", // 0.01 ETH
     gasLane:
@@ -73,6 +79,7 @@ export const networkConfig: networkConfigInfo = {
     callbackGasLimit: "500000", // 500,000 gas
     vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
     // ethUsdPriceFeed: "0x0715A7794a1dc8e42615F059dD6e406A6594651A",
+    lotteryEntranceFee: ethers.parseEther("0.1").toString(),
   },
   4002: {
     name: "fantom-test",
