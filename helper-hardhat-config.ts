@@ -8,6 +8,8 @@ export interface networkConfigItem {
   wbtcUsdPriceFeed?: string;
   weth?: string;
   wbtc?: string;
+  DECIMALS?: string;
+  ETH_USD?: string;
   name?: string;
   subscriptionId?: string;
   gasLane?: string;
