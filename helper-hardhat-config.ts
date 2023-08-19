@@ -8,8 +8,9 @@ export interface networkConfigItem {
   wbtcUsdPriceFeed?: string;
   weth?: string;
   wbtc?: string;
-  DECIMALS?: string;
-  ETH_USD?: string;
+  DECIMALS?: number;
+  ETH_USD_PRICE?: number;
+  BTC_USD_PRICE?: number;
   name?: string;
   subscriptionId?: string;
   gasLane?: string;
@@ -43,6 +44,9 @@ export const networkConfig: networkConfigInfo = {
     wbtcUsdPriceFeed: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
     weth: "0xdd13E55209Fd76AfE204dBda4007C227904f0a81",
     wbtc: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    DECIMALS: 8,
+    ETH_USD_PRICE: 2000e8,
+    BTC_USD_PRICE: 1000e8,
     name: "sepolia",
     lotteryEntranceFee: "10000000000000000", // 0.01 ETH
     gasLane:
