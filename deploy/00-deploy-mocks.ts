@@ -12,15 +12,53 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
 
+  // from:
+  // https://github.com/Cyfrin/foundry-defi-stablecoin-f23/blob/main/script/HelperConfig.s.sol
   const args1: any[] = [
     networkConfig[network.config.chainId!]["DECIMALS"],
     networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
     // address _pdAddress
   ];
-  const mockV3Aggregator = await deploy("MockV3Aggregator", {
+  const ethUsdPriceFeed = await deploy("MockV3Aggregator", {
     from: deployer,
     log: true,
     args: args1,
+    // waitConfirmations: waitBlockConfirmations,
+  });
+
+  const args2: any[] = [
+    networkConfig[network.config.chainId!]["DECIMALS"],
+    networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
+    // address _pdAddress
+  ];
+  const wethMock = await deploy("ERC20Mock", {
+    from: deployer,
+    log: true,
+    args: args2,
+    // waitConfirmations: waitBlockConfirmations,
+  });
+
+  const args3: any[] = [
+    networkConfig[network.config.chainId!]["DECIMALS"],
+    networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
+    // address _pdAddress
+  ];
+  const btcUsdPriceFeed = await deploy("MockV3Aggregator", {
+    from: deployer,
+    log: true,
+    args: args3,
+    // waitConfirmations: waitBlockConfirmations,
+  });
+
+  const args4: any[] = [
+    networkConfig[network.config.chainId!]["DECIMALS"],
+    networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
+    // address _pdAddress
+  ];
+  const wbtcMock = await deploy("ERC20Mock", {
+    from: deployer,
+    log: true,
+    args: args4,
     // waitConfirmations: waitBlockConfirmations,
   });
 
