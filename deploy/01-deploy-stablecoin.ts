@@ -7,25 +7,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const args1: any[] = [
-    // address[] memory _tokenAddresses,
-    // address[] memory _priceFeedAddresses,
-    // address _pdAddress
-  ];
-  const dscEngine = await deploy("DSCEngine", {
+  // TODO: if localhost, put mock addresses
+
+  const args1: any[] = [""];
+  const pokemonDollar = await deploy("PokemonDollar", {
     from: deployer,
     log: true,
     args: args1,
     // waitConfirmations: waitBlockConfirmations,
   });
 
-  const args2: any[] = [""];
-  const pokemonDollar = await deploy("PokemonDollar", {
+  const args2: any[] = [
+    // address[] memory _tokenAddresses,[]
+    // address[] memory _priceFeedAddresses,[]
+    // pokemonDollar.address
+  ];
+  const dscEngine = await deploy("DSCEngine", {
     from: deployer,
     log: true,
     args: args2,
     // waitConfirmations: waitBlockConfirmations,
   });
+
+  // TODO: transfer ownership to dscEngine
+  // ToDo: To take ownership of yourContract using the ownable library uncomment next line and add the
+  // address you want to be the owner.
+  // pokemonDollar.transferOwnership(dscEngine.address);
 
   //    // Verify the deployment
   //    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
