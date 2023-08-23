@@ -40,14 +40,11 @@ export const networkConfig: networkConfigInfo = {
   //     // interval: "30",
   // },
   11155111: {
+    name: "sepolia",
     wethUsdPriceFeed: "0x694AA1769357215DE4FAC081bf1f309aDC325306",
     wbtcUsdPriceFeed: "0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43",
     weth: "0xdd13E55209Fd76AfE204dBda4007C227904f0a81",
     wbtc: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-    DECIMALS: 8,
-    ETH_USD_PRICE: 2000e8,
-    BTC_USD_PRICE: 1000e8,
-    name: "sepolia",
     lotteryEntranceFee: "10000000000000000", // 0.01 ETH
     gasLane:
       "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
@@ -58,6 +55,9 @@ export const networkConfig: networkConfigInfo = {
   },
   31337: {
     name: "localhost",
+    DECIMALS: 8,
+    ETH_USD_PRICE: 2000e8,
+    BTC_USD_PRICE: 1000e8,
     lotteryEntranceFee: "10000000000000000", // 0.01 ETH
     gasLane:
       "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",

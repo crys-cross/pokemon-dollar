@@ -1,4 +1,5 @@
 // reserved for mocks
+// TODO: fix localhost deployment vs others
 // deploy mockv3agreggator(ETHUSDPricefeed, BTCUSDPriceFeed)
 // deploy erc20mock(eth, btc)(deployed only on localhost) TODO:
 
@@ -15,35 +16,36 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // from:
   // https://github.com/Cyfrin/foundry-defi-stablecoin-f23/blob/main/script/HelperConfig.s.sol
-  const args1: any[] = [
-    networkConfig[network.config.chainId!]["DECIMALS"],
-    networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
-  ];
-  const ethUsdPriceFeed = await deploy("MockV3Aggregator", {
-    from: deployer,
-    log: true,
-    args: args1,
-    // waitConfirmations: waitBlockConfirmations,
-  });
-
-  const args3: any[] = [
-    networkConfig[network.config.chainId!]["DECIMALS"],
-    networkConfig[network.config.chainId!]["BTC_USD_PRICE"],
-  ];
-  const btcUsdPriceFeed = await deploy("MockV3Aggregator", {
-    from: deployer,
-    log: true,
-    args: args3,
-    // waitConfirmations: waitBlockConfirmations,
-  });
 
   // deploy ERC20Mocksonly on localhost
   if (chainId === 31337) {
+    const args1: any[] = [
+      networkConfig[network.config.chainId!]["DECIMALS"],
+      networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
+    ];
+    const ethUsdPriceFeed = await deploy("MockV3Aggregator", {
+      from: deployer,
+      log: true,
+      args: args1,
+      // waitConfirmations: waitBlockConfirmations,
+    });
+
     const args2: any[] = ["WETH", "WETH", deployer, 1000e8];
     const wethMock = await deploy("ERC20Mock", {
       from: deployer,
       log: true,
       args: args2,
+      // waitConfirmations: waitBlockConfirmations,
+    });
+
+    const args3: any[] = [
+      networkConfig[network.config.chainId!]["DECIMALS"],
+      networkConfig[network.config.chainId!]["BTC_USD_PRICE"],
+    ];
+    const btcUsdPriceFeed = await deploy("MockV3Aggregator", {
+      from: deployer,
+      log: true,
+      args: args3,
       // waitConfirmations: waitBlockConfirmations,
     });
 
@@ -54,6 +56,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       args: args4,
       // waitConfirmations: waitBlockConfirmations,
     });
+  } else {
+    console.log("Not on localhost, no Mocks needed");
   }
 
   //    // Verify the deployment
