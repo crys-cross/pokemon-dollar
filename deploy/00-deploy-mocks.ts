@@ -2,6 +2,8 @@
 // TODO: fix localhost deployment vs others
 // deploy mockv3agreggator(ETHUSDPricefeed, BTCUSDPriceFeed)
 // deploy erc20mock(eth, btc)(deployed only on localhost) TODO:
+// mock guide: https://github.com/PatrickAlphaC/hardhat-fund-me-fcc
+// https://github.com/wighawag/hardhat-deploy#creating-fixtures
 
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
@@ -14,6 +16,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
 
+  let ethUsdPriceFeed, btcUsdPriceFeed, wethMock, wbtcMock;
+
   // from:
   // https://github.com/Cyfrin/foundry-defi-stablecoin-f23/blob/main/script/HelperConfig.s.sol
 
@@ -23,7 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       networkConfig[network.config.chainId!]["DECIMALS"],
       networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
     ];
-    const ethUsdPriceFeed = await deploy("MockV3Aggregator", {
+    ethUsdPriceFeed = await deploy("MockV3Aggregator", {
       from: deployer,
       log: true,
       args: args1,
@@ -31,7 +35,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     });
 
     const args2: any[] = ["WETH", "WETH", deployer, 1000e8];
-    const wethMock = await deploy("ERC20Mock", {
+    wethMock = await deploy("ERC20Mock", {
       from: deployer,
       log: true,
       args: args2,
@@ -42,7 +46,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       networkConfig[network.config.chainId!]["DECIMALS"],
       networkConfig[network.config.chainId!]["BTC_USD_PRICE"],
     ];
-    const btcUsdPriceFeed = await deploy("MockV3Aggregator", {
+    btcUsdPriceFeed = await deploy("MockV3Aggregator", {
       from: deployer,
       log: true,
       args: args3,
@@ -50,7 +54,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     });
 
     const args4: any[] = ["WBTC", "WBTC", deployer, 1000e8];
-    const wbtcMock = await deploy("ERC20Mock", {
+    wbtcMock = await deploy("ERC20Mock", {
       from: deployer,
       log: true,
       args: args4,
