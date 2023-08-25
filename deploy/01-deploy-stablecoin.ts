@@ -7,20 +7,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
+  let tokenAddresses: string[] = [];
+  let priceFeedAddresses: string[] = [];
   // TODO: if localhost, put mock addresses
+  // else put designated addresses based on chainId
 
-  const args1: any[] = [""];
+  // const args1: any[] = [""];
   const pokemonDollar = await deploy("PokemonDollar", {
     from: deployer,
     log: true,
-    args: args1,
+    args: [""],
     // waitConfirmations: waitBlockConfirmations,
   });
 
   const args2: any[] = [
-    // address[] memory _tokenAddresses,[]
-    // address[] memory _priceFeedAddresses,[]
-    // pokemonDollar.address
+    tokenAddresses,
+    priceFeedAddresses,
+    pokemonDollar.address,
   ];
   const dscEngine = await deploy("DSCEngine", {
     from: deployer,
