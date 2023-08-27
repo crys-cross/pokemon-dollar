@@ -31,35 +31,37 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ethUsdPriceFeed = ethUsdPriceFeedraw.address;
 
     const args2: any[] = ["WETH", "WETH", deployer, 1000e8];
-    wethMock = await deploy("ERC20Mock", {
+    const wethMockraw = await deploy("ERC20Mock", {
       from: deployer,
       log: true,
       args: args2,
       // waitConfirmations: waitBlockConfirmations,
     });
+    wethMock = wethMockraw.address;
 
     const args3: any[] = [
       networkConfig[network.config.chainId!]["DECIMALS"],
       networkConfig[network.config.chainId!]["BTC_USD_PRICE"],
     ];
-    btcUsdPriceFeed = await deploy("MockV3Aggregator", {
+    const btcUsdPriceFeedraw = await deploy("MockV3Aggregator", {
       from: deployer,
       log: true,
       args: args3,
       // waitConfirmations: waitBlockConfirmations,
     });
+    btcUsdPriceFeed = btcUsdPriceFeedraw.address;
 
     const args4: any[] = ["WBTC", "WBTC", deployer, 1000e8];
-    wbtcMock = await deploy("ERC20Mock", {
+    const wbtcMockraw = await deploy("ERC20Mock", {
       from: deployer,
       log: true,
       args: args4,
       // waitConfirmations: waitBlockConfirmations,
     });
+    wbtcMock = wbtcMockraw.address;
 
-    tokenAddresses = [];
-
-    priceFeedAddresses = [];
+    tokenAddresses = [wethMock, wbtcMock];
+    priceFeedAddresses = [ethUsdPriceFeed, btcUsdPriceFeed];
   } else {
     tokenAddresses = [
       networkConfig[chainId!]["weth"] as string,
