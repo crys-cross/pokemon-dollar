@@ -1,11 +1,12 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { networkConfig, networkConfigInfo } from "../helper-hardhat-config";
+import { ethers } from "ethers";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // code here
   const { deployments, getNamedAccounts, network } = hre;
-  const { deploy, log } = deployments;
+  const { deploy, log, get } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId!;
 
@@ -73,7 +74,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ];
   }
 
-  // deploying here
+  // deploying contracts here
   // const args1: any[] = [""];
   const pokemonDollar = await deploy("PokemonDollar", {
     from: deployer,
@@ -97,7 +98,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // TODO: transfer ownership to dscEngine
   // ToDo: To take ownership of yourContract using the ownable library uncomment next line and add the
   // address you want to be the owner.
-  // pokemonDollar.transferOwnership(dscEngine.address);
+  // const pokemonDollarContract = await ethers.getContract('PokemonDollar', deployer);
+  // pokemonDollarContract.transferOwnership(dscEngine.address);
 
   //    // Verify the deployment
   //    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {

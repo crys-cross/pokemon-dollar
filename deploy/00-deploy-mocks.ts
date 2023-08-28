@@ -4,6 +4,7 @@
 // // deploy erc20mock(eth, btc)(deployed only on localhost) TODO:
 // // mock guide: https://github.com/PatrickAlphaC/hardhat-fund-me-fcc
 // // https://github.com/wighawag/hardhat-deploy#creating-fixtures
+// // https://github.com/wighawag/hardhat-deploy-ethers
 
 // import { HardhatRuntimeEnvironment } from "hardhat/types";
 // import { DeployFunction } from "hardhat-deploy/types";
