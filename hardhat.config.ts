@@ -69,6 +69,14 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
     },
   },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    user: {
+      default: 1,
+    },
+  },
   // verify: {
   //   etherscan: {
   //     apiKey: `${etherscanApiKey}`,

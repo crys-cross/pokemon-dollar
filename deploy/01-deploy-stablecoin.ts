@@ -15,7 +15,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   let priceFeedAddresses: any[] = [];
 
   // getting values and addresses based on chainID here
-  // TODO: if localhost, put mock addresses
+  // if localhost, put mock addresses
   // else put designated addresses based on chainId
   // deploy ERC20Mocksonly on localhost
   if (chainId === 31337) {
@@ -27,7 +27,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       from: deployer,
       log: true,
       args: args1,
-      // waitConfirmations: waitBlockConfirmations,
     });
     ethUsdPriceFeed = ethUsdPriceFeedraw.address;
 
@@ -36,7 +35,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       from: deployer,
       log: true,
       args: args2,
-      // waitConfirmations: waitBlockConfirmations,
     });
     wethMock = wethMockraw.address;
 
@@ -48,7 +46,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       from: deployer,
       log: true,
       args: args3,
-      // waitConfirmations: waitBlockConfirmations,
     });
     btcUsdPriceFeed = btcUsdPriceFeedraw.address;
 
@@ -57,7 +54,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       from: deployer,
       log: true,
       args: args4,
-      // waitConfirmations: waitBlockConfirmations,
     });
     wbtcMock = wbtcMockraw.address;
 
@@ -79,8 +75,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const pokemonDollar = await deploy("PokemonDollar", {
     from: deployer,
     log: true,
-    args: [""],
-    // waitConfirmations: waitBlockConfirmations,
+    args: [],
   });
 
   const args2: any[] = [
@@ -92,7 +87,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     log: true,
     args: args2,
-    // waitConfirmations: waitBlockConfirmations,
   });
 
   // TODO: transfer ownership to dscEngine
