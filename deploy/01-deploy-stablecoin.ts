@@ -2,6 +2,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { networkConfig, networkConfigInfo } from "../helper-hardhat-config";
 import { ethers } from "hardhat";
+// TODO: savee multiple instance of same deployed contract(ERC20Mock, MockV3Aggregator)
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // code here
@@ -89,14 +90,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: args2,
   });
 
-  // TODO: transfer ownership to dscEngine
-  // ToDo: To take ownership of yourContract using the ownable library uncomment next line and add the
-  // address you want to be the owner.
+  // Change ownership here
   const pokemonDollarContract = await ethers.getContractAt(
     "PokemonDollar",
     pokemonDollar.address
   );
-  pokemonDollarContract.transferOwnership(dscEngine.address);
+  const transferTx = pokemonDollarContract.transferOwnership(dscEngine.address);
+  console.log(transferTx);
+  if ((await pokemonDollarContract.owner()) === dscEngine.address) {
+    console.log(`ownership transfered successfully to ${dscEngine.address}`);
+  }
 
   //    // Verify the deployment
   //    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
