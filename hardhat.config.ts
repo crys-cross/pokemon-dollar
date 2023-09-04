@@ -5,6 +5,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-deploy";
+import "hardhat-deploy-ethers";
 import "hardhat-contract-sizer";
 import "dotenv/config";
 import "@nomicfoundation/hardhat-toolbox";
