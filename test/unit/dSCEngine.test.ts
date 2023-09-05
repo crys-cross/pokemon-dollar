@@ -9,6 +9,7 @@ import {
   PokemonDollar,
   DSCEngine,
   MockV3Aggregator,
+  ERC20Mock,
 } from "../../typechain-types";
 import { beforeEach } from "mocha";
 
@@ -20,6 +21,12 @@ import { beforeEach } from "mocha";
       let mockV3Aggregator: MockV3Aggregator;
       let accounts: SignerWithAddress[];
       let deployer: SignerWithAddress;
+
+      // TODO: fix contract addressses and typechains  below
+      let ethUsdPriceFeed;
+      let btcUsdPriceFeed;
+      let weth: ERC20Mock;
+      let wbtc;
 
       beforeEach(async () => {
         accounts = await ethers.getSigners();
@@ -35,7 +42,15 @@ import { beforeEach } from "mocha";
       });
 
       describe("getUsdValue", () => {
-        it("getting the right USD value", async () => {});
+        it("getting the right USD value", async () => {
+          // If we want $100 of WETH @ $2000/WETH, that would be 0.05 WETH
+          const expectedWeth = ethers.parseEther("0.05");
+          const amountWeth = await dSCEngine.getTokenAmountFromUsd(
+            weth,
+            ethers.parseEther("100")
+          );
+          assert.equal(amountWeth, expectedWeth);
+        });
       });
 
       // test below need own setup
