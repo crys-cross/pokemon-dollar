@@ -8,7 +8,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 // mock class using ERC20
 // original contract below as stated in Mr. Patrick Collins Stablecoin Course
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/0a25c1940ca220686588c4af3ec526f725fe2582/contracts/mocks/ERC20Mock.sol
-contract ERC20Mock is ERC20 {
+contract WethMock is ERC20 {
     constructor(
         string memory name,
         string memory symbol,
