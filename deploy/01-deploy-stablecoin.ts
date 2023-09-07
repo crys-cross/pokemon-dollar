@@ -24,7 +24,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       networkConfig[network.config.chainId!]["DECIMALS"],
       networkConfig[network.config.chainId!]["ETH_USD_PRICE"],
     ];
-    const ethUsdPriceFeedraw = await deploy("MockV3Aggregator", {
+    const ethUsdPriceFeedraw = await deploy("MockV3AggregatorWeth", {
       from: deployer,
       log: true,
       args: args1,
@@ -32,7 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     ethUsdPriceFeed = ethUsdPriceFeedraw.address;
 
     const args2: any[] = ["WETH", "WETH", deployer, 1000e8];
-    const wethMockraw = await deploy("ERC20Mock", {
+    const wethMockraw = await deploy("WethMock", {
       from: deployer,
       log: true,
       args: args2,
@@ -43,7 +43,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       networkConfig[network.config.chainId!]["DECIMALS"],
       networkConfig[network.config.chainId!]["BTC_USD_PRICE"],
     ];
-    const btcUsdPriceFeedraw = await deploy("MockV3Aggregator", {
+    const btcUsdPriceFeedraw = await deploy("MockV3AggregatorWbtc", {
       from: deployer,
       log: true,
       args: args3,
@@ -51,7 +51,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     btcUsdPriceFeed = btcUsdPriceFeedraw.address;
 
     const args4: any[] = ["WBTC", "WBTC", deployer, 1000e8];
-    const wbtcMockraw = await deploy("ERC20Mock", {
+    const wbtcMockraw = await deploy("WbtcMock", {
       from: deployer,
       log: true,
       args: args4,
@@ -79,6 +79,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [],
   });
 
+  // TODO: fix type instead of any[]
   const args2: any[] = [
     tokenAddresses,
     priceFeedAddresses,
@@ -101,6 +102,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(`ownership transfered successfully to ${dscEngine.address}`);
   }
 
+  // TODO: fix automatic verify
   //    // Verify the deployment
   //    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
   //     log("Verifying...")

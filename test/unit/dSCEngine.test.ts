@@ -8,25 +8,24 @@ import { developmentChains, networkConfig } from "../../helper-hardhat-config";
 import {
   PokemonDollar,
   DSCEngine,
-  MockV3Aggregator,
-  ERC20Mock,
+  MockV3AggregatorWbtc,
+  MockV3AggregatorWeth,
+  WbtcMock,
+  WethMock,
 } from "../../typechain-types";
-import { beforeEach } from "mocha";
 
 !developmentChains.includes(network.name)
   ? describe.skip
   : describe("DSCEngine Unit Test", () => {
       let pokemonDollar: PokemonDollar;
       let dSCEngine: DSCEngine;
-      let mockV3Aggregator: MockV3Aggregator;
       let accounts: SignerWithAddress[];
       let deployer: SignerWithAddress;
 
-      // TODO: fix contract addressses and typechains  below
-      let ethUsdPriceFeed;
-      let btcUsdPriceFeed;
-      let weth: ERC20Mock;
-      let wbtc;
+      let ethUsdPriceFeed: MockV3AggregatorWeth;
+      let btcUsdPriceFeed: MockV3AggregatorWbtc;
+      let weth: WethMock;
+      let wbtc: WbtcMock;
 
       beforeEach(async () => {
         accounts = await ethers.getSigners();
@@ -34,15 +33,27 @@ import { beforeEach } from "mocha";
         await deployments.fixture(["all"]);
         pokemonDollar = await ethers.getContract("PokemonDollar");
         dSCEngine = await ethers.getContract("DSCEngine");
-        mockV3Aggregator = await ethers.getContract("MockV3Aggregator");
+        ethUsdPriceFeed = await ethers.getContract("MockV3AggregatorWeth");
+        btcUsdPriceFeed = await ethers.getContract("MockV3AggregatorWbtc");
+        weth = await ethers.getContract("WethMock");
+        wbtc = await ethers.getContract("WbtcMock");
       });
 
       describe("constructor", () => {
-        it("", async () => {});
+        it("reverts if token length doesn't match pricefeeds", async () => {});
       });
 
       describe("getUsdValue", () => {
-        it("getting the right USD value", async () => {
+        it("get token amount from usd", async () => {
+          // If we want $100 of WETH @ $2000/WETH, that would be 0.05 WETH
+          const expectedWeth = ethers.parseEther("0.05");
+          const amountWeth = await dSCEngine.getTokenAmountFromUsd(
+            weth,
+            ethers.parseEther("100")
+          );
+          assert.equal(amountWeth, expectedWeth);
+        });
+        it("get usd value", async () => {
           // If we want $100 of WETH @ $2000/WETH, that would be 0.05 WETH
           const expectedWeth = ethers.parseEther("0.05");
           const amountWeth = await dSCEngine.getTokenAmountFromUsd(
