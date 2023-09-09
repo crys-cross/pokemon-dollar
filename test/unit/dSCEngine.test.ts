@@ -54,13 +54,10 @@ import {
           assert.equal(amountWeth, expectedWeth);
         });
         it("get usd value", async () => {
-          // If we want $100 of WETH @ $2000/WETH, that would be 0.05 WETH
-          const expectedWeth = ethers.parseEther("0.05");
-          const amountWeth = await dSCEngine.getTokenAmountFromUsd(
-            weth,
-            ethers.parseEther("100")
-          );
-          assert.equal(amountWeth, expectedWeth);
+          const ethAmount = ethers.parseEther("15");
+          const expectedUsd = ethers.parseEther("30000");
+          const usdValue = await dSCEngine.getUsdValue(weth, ethAmount);
+          assert.equal(usdValue, expectedUsd);
         });
       });
 
