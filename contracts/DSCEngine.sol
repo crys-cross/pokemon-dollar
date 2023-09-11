@@ -105,9 +105,23 @@ contract DSCEngine is ReentrancyGuard {
     ////////////////////////
     // External Functions //
     ////////////////////////
-    function depositCollateralAndMintPd() external {}
 
-    /*
+    /**
+     * @param _tokenCollateralAddress: The ERC20 token address of the collateral you're depositing
+     * @param _amountCollateral: The amount of collateral you're depositing
+     * @param _amountPDToMint: The amount of PD you want to mint
+     * @notice This function will deposit your collateral and mint PD in one transaction
+     */
+    function depositCollateralAndMintPd(
+        address _tokenCollateralAddress,
+        uint256 _amountCollateral,
+        uint256 _amountPDToMint
+    ) external {
+        depositCollateral(_tokenCollateralAddress, _amountCollateral);
+        mintPd(_amountPDToMint);
+    }
+
+    /**
      * @notice follows CEI
      * @param _tokenCollateralAddress The address of the token to deposit as collateral
      * @param _amountCollateral The amount of collateral to deposit
@@ -116,7 +130,7 @@ contract DSCEngine is ReentrancyGuard {
         address _tokenCollateralAddress,
         uint256 _amountCollateral
     )
-        external
+        public
         moreThanZero(_amountCollateral)
         isAllowedToken(_tokenCollateralAddress)
         nonReentrant
@@ -145,8 +159,8 @@ contract DSCEngine is ReentrancyGuard {
 
     function redeemCollateral() external {}
 
-    /*
-     * @param amountPdToMint: The amount of PD you want to mint
+    /**
+     * @param _amountPdToMint: The amount of PD you want to mint
      * You can only mint PD if you hav enough collateral
      */
     function mintPd(

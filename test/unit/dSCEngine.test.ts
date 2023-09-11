@@ -21,15 +21,20 @@ import {
       let dSCEngine: DSCEngine;
       let accounts: SignerWithAddress[];
       let deployer: SignerWithAddress;
+      let user: SignerWithAddress;
 
       let ethUsdPriceFeed: MockV3AggregatorWeth;
       let btcUsdPriceFeed: MockV3AggregatorWbtc;
       let weth: WethMock;
       let wbtc: WbtcMock;
 
+      const amountCollateral = ethers.parseEther("10");
+      const STARTING_USER_BALANCE = ethers.parseEther("10");
+
       beforeEach(async () => {
         accounts = await ethers.getSigners();
         deployer = accounts[0];
+        user = accounts[1];
         await deployments.fixture(["all"]);
         pokemonDollar = await ethers.getContract("PokemonDollar");
         dSCEngine = await ethers.getContract("DSCEngine");
@@ -37,6 +42,8 @@ import {
         btcUsdPriceFeed = await ethers.getContract("MockV3AggregatorWbtc");
         weth = await ethers.getContract("WethMock");
         wbtc = await ethers.getContract("WbtcMock");
+
+        weth.mint(user, STARTING_USER_BALANCE);
       });
 
       describe("constructor", () => {
@@ -61,12 +68,22 @@ import {
         });
       });
 
-      // test below need own setup
-      describe("deposit collateral", () => {
+      describe("depositCollateral", () => {
+        it("reverts if collateral is zero", async () => {
+          weth.connect(user).approve(dSCEngine, amountCollateral);
+          await expect(
+            dSCEngine.depositCollateral(weth, 0)
+          ).to.be.revertedWithCustomError(
+            dSCEngine,
+            "DSCEngine__NeedsMoreThanZero"
+          );
+        });
+
+        // test below need own setup
         it("", async () => {});
       });
 
-      describe("deposit cillateral and mint", () => {
+      describe("reverts if collateral is zero", () => {
         it("", async () => {});
       });
 
