@@ -59,12 +59,17 @@ contract DSCEngine is ReentrancyGuard {
         address indexed token,
         uint256 indexed amount
     );
+    // event CollateralRedeemed(
+    //     address indexed redeemFrom,
+    //     address indexed redeemTo,
+    //     address token,
+    //     uint256 amount
+    // ); // if redeemFrom != redeemedTo, then it was liquidated
     event CollateralRedeemed(
-        address indexed redeemFrom,
-        address indexed redeemTo,
-        address token,
-        uint256 amount
-    ); // if redeemFrom != redeemedTo, then it was liquidated
+        address indexed user,
+        address indexed token,
+        uint256 indexed amount
+    );
 
     ///////////////
     // Modifiers //
@@ -155,9 +160,48 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-    function redeemCollateralforPd() external {}
+    /**
+     * @param _tokenCollateralAddress: The ERC20 token address of the collateral you're depositing
+     * @param _amountCollateral: The amount of collateral you're depositing
+     * @param _amountPdToBurn: The amount of DSC you want to burn
+     * @notice This function will withdraw your collateral and burn DSC in one transaction
+     */
+    function redeemCollateralforPd(
+        address _tokenCollateralAddress,
+        uint256 _amountCollateral,
+        uint256 _amountPdToBurn
+    ) external {
+        burnPd(_amountPdToBurn);
+        redeemCollateral(_tokenCollateralAddress, _amountCollateral); // already checks health factor
+    }
 
-    function redeemCollateral() external {}
+    /**
+     * @param _tokenCollateralAddress: The ERC20 token address of the collateral you're redeeming
+     * @param _amountCollateral: The amount of collateral you're redeeming
+     * @notice This function will redeem your collateral.
+     * @notice If you have DSC minted, you will not be able to redeem until you burn your DSC
+     */
+    function redeemCollateral(
+        address _tokenCollateralAddress,
+        uint256 _amountCollateral
+    ) public moreThanZero(_amountCollateral) nonReentrant {
+        s_collateralDeposited[msg.sender][
+            _tokenCollateralAddress
+        ] -= _amountCollateral;
+        emit CollateralRedeemed(
+            msg.sender,
+            _tokenCollateralAddress,
+            _amountCollateral
+        );
+        bool success = IERC20(_tokenCollateralAddress).transfer(
+            msg.sender,
+            _amountCollateral
+        );
+        if (!success) {
+            revert DSCEngine__Transferfailed();
+        }
+        revertIfHealthFactorIsBroken(msg.sender);
+    }
 
     /**
      * @param _amountPdToMint: The amount of PD you want to mint
@@ -174,7 +218,15 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-    function burnPd() external {}
+    function burnPd(uint256 _amount) public moreThanZero(_amount) {
+        s_PdMinted[msg.sender] -= _amount;
+        bool success = i_pd.transferFrom(msg.sender, address(this), _amount);
+        if (!success) {
+            revert DSCEngine__Transferfailed();
+        }
+        i_pd.burn(_amount);
+        revertIfHealthFactorIsBroken(msg.sender); // will probably never hit. . .
+    }
 
     function liquidate() external {}
 
