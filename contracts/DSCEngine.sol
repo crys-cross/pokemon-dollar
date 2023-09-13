@@ -33,6 +33,7 @@ contract DSCEngine is ReentrancyGuard {
     error DSCEngine__Transferfailed();
     error DSCEngine__MintFailed();
     error DSCEngine__BreaksHealthFactor(uint256 healthFactor);
+    error DSCEngine__HealthFactorOk();
 
     /////////////////////
     // State Variables //
@@ -41,7 +42,7 @@ contract DSCEngine is ReentrancyGuard {
     uint256 private constant PRECISION = 1e18;
     uint256 private constant LIQUIDATION_THRESHOLD = 50; //200% overcollateralized
     uint256 private constant LIQUIDATION_PRECISION = 100;
-    uint256 private constant MIN_HEALTH_FACTOR = 1;
+    uint256 private constant MIN_HEALTH_FACTOR = 1e18;
 
     mapping(address token => address priceFeed) private s_priceFeeds; // tokenToPriceFeed
     mapping(address user => mapping(address token => uint256 amount))
@@ -228,7 +229,34 @@ contract DSCEngine is ReentrancyGuard {
         revertIfHealthFactorIsBroken(msg.sender); // will probably never hit. . .
     }
 
-    function liquidate() external {}
+    /**
+     * @param _collateral: The ERC20 token address of the collateral you're using to make the protocol solvent again.
+     * This is collateral that you're going to take from the user who is insolvent.
+     * In return, you have to burn your DSC to pay off their debt, but you don't pay off your own.
+     * @param _user: The user who is insolvent. They have to have a _healthFactor below MIN_HEALTH_FACTOR
+     * @param _debtToCover: The amount of DSC you want to burn to cover the user's debt.
+     * @notice You can partially liquidate a user.
+     * @notice You will get a 10% LIQUIDATION_BONUS for taking the users funds.
+     * @notice This function working assumes that the protocol will be roughly 150% overcollateralized in order for this to work.
+     * @notice A known bug would be if the protocol was only 100% collateralized, we wouldn't be able to liquidate anyone.
+     * For example, if the price of the collateral plummeted before anyone could be liquidated.
+     */
+    function liquidate(
+        address _collateral,
+        address _user,
+        uint256 _debtToCover
+    ) external moreThanZero(_debtToCover) nonReentrant {
+        // need to check user health factor
+        uint256 startingUserHealthFactor = healthFactor(_user);
+        if (startingUserHealthFactor >= MIN_HEALTH_FACTOR) {
+            revert DSCEngine__HealthFactorOk();
+        }
+        // burn their PD "debt" an take their collateral
+        uint256 tokenAmountFromDebtCovered = getTokenAmountFromUsd(
+            _collateral,
+            _debtToCover
+        );
+    }
 
     function getHealthFactor() external view {}
 
