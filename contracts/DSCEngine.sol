@@ -43,6 +43,7 @@ contract DSCEngine is ReentrancyGuard {
     uint256 private constant LIQUIDATION_THRESHOLD = 50; //200% overcollateralized
     uint256 private constant LIQUIDATION_PRECISION = 100;
     uint256 private constant MIN_HEALTH_FACTOR = 1e18;
+    uint256 private constant LIQUIDATION_BONUS = 10; // this means a 10% bonus
 
     mapping(address token => address priceFeed) private s_priceFeeds; // tokenToPriceFeed
     mapping(address user => mapping(address token => uint256 amount))
@@ -256,6 +257,12 @@ contract DSCEngine is ReentrancyGuard {
             _collateral,
             _debtToCover
         );
+
+        uint256 bonusCollateral = (tokenAmountFromDebtCovered *
+            LIQUIDATION_BONUS) / LIQUIDATION_PRECISION;
+
+        uint256 totaCollateralToRedeem = tokenAmountFromDebtCovered +
+            bonusCollateral;
     }
 
     function getHealthFactor() external view {}
