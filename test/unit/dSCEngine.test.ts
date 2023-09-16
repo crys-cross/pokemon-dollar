@@ -43,11 +43,68 @@ import {
         weth = await ethers.getContract("WethMock");
         wbtc = await ethers.getContract("WbtcMock");
 
-        weth.mint(user, STARTING_USER_BALANCE);
+        await weth.mint(user, STARTING_USER_BALANCE);
+      });
+
+      // TODO fix reverts errors
+      describe("constructor", () => {
+        it("reverts if token length doesn't match pricefeeds", async () => {
+          //get addresses here
+          const wethAddress = await weth.getAddress();
+          const ethUsdPriceFeedAddress = await ethUsdPriceFeed.getAddress();
+          const btcUsdPriceFeedAddress = await btcUsdPriceFeed.getAddress();
+          const pokemonDollarAddress = await pokemonDollar.getAddress();
+          //params here
+          const tokenAddresses = [wethAddress];
+          const priceFeedAddresses = [
+            ethUsdPriceFeedAddress,
+            btcUsdPriceFeedAddress,
+          ];
+          const args = [
+            tokenAddresses,
+            priceFeedAddresses,
+            pokemonDollarAddress,
+          ];
+
+          await expect(await ethers.deployContract("DSCEngine", args)).to.be
+            .reverted;
+        });
       });
 
       describe("constructor", () => {
-        it("reverts if token length doesn't match pricefeeds", async () => {});
+        it("reverts if token length doesn't match pricefeeds", async () => {
+          // TODO: fix address errors
+          //get addresses here
+          const wethAddress = await weth.getAddress();
+          const ethUsdPriceFeedAddress = await ethUsdPriceFeed.getAddress();
+          const btcUsdPriceFeedAddress = await btcUsdPriceFeed.getAddress();
+          const pokemonDollarAddress = await pokemonDollar.getAddress();
+          //params here
+          const tokenAddresses = [wethAddress];
+          const priceFeedAddresses = [
+            ethUsdPriceFeedAddress,
+            btcUsdPriceFeedAddress,
+          ];
+          const args = [
+            tokenAddresses,
+            priceFeedAddresses,
+            pokemonDollarAddress,
+          ];
+          // get contract factory
+          const contract = await ethers.getContractFactory("DSCEngine");
+          //logs
+          console.log(wethAddress);
+          console.log(ethUsdPriceFeedAddress);
+          console.log(btcUsdPriceFeedAddress);
+          console.log(pokemonDollarAddress);
+          await expect(
+            await contract.deploy(args)
+            // await ethers.deployContract("DSCEngine", args)
+          ).to.be.revertedWithCustomError(
+            contract,
+            "DSCEngine__TokenAddressAndPriceFeedAddressesMustBeSameLength()"
+          );
+        });
       });
 
       describe("getUsdValue", () => {
