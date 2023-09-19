@@ -324,7 +324,7 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-    function _getAccountInformation(
+    function __getAccountInformation(
         address _user
     )
         private
@@ -359,7 +359,7 @@ contract DSCEngine is ReentrancyGuard {
         (
             uint256 totalDscMinted,
             uint256 collateralValueInUsd
-        ) = _getAccountInformation(_user);
+        ) = __getAccountInformation(_user);
         return calculateHealthFactor(totalDscMinted, collateralValueInUsd);
     }
 
@@ -422,5 +422,15 @@ contract DSCEngine is ReentrancyGuard {
         // Most USD pairs have 8 decimals, so we will just pretend they all do
         return ((usdAmountInWei * PRECISION) /
             (uint256(price) * ADDITIONAL_FEED_PRECISION));
+    }
+
+    function getAccountInformation(
+        address user
+    )
+        external
+        view
+        returns (uint256 totalPdMinted, uint256 collateralValueinUsd)
+    {
+        (totalPdMinted, collateralValueinUsd) = __getAccountInformation(user);
     }
 }

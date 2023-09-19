@@ -31,8 +31,28 @@ import {
       let weth: WethMock;
       let wbtc: WbtcMock;
 
+      //get addresses
+      let wbtcAddress: any;
+      let wethAddress: any;
+      let ethUsdPriceFeedAddress: any;
+      let btcUsdPriceFeedAddress: any;
+      let pokemonDollarAddress: any;
+      let dSCEngineAddress: any;
+
+      //constant variables
       const amountCollateral = ethers.parseEther("10");
       const STARTING_USER_BALANCE = ethers.parseEther("10");
+
+      //recurring function modifier
+      const depositCollateral = async (
+        weth: WethMock,
+        wethAddress: any,
+        dSCEngineAddress: any,
+        amountCollateral: bigint
+      ) => {
+        await weth.approve(dSCEngineAddress, amountCollateral);
+        dSCEngine.depositCollateral(wethAddress, amountCollateral);
+      };
 
       beforeEach(async () => {
         accounts = await ethers.getSigners();
@@ -47,6 +67,14 @@ import {
         wbtc = await ethers.getContract("WbtcMock");
 
         await weth.mint(user, STARTING_USER_BALANCE);
+
+        //get addresses here
+        const wbtcAddress = await wbtc.getAddress();
+        const wethAddress = await weth.getAddress();
+        const ethUsdPriceFeedAddress = await ethUsdPriceFeed.getAddress();
+        const btcUsdPriceFeedAddress = await btcUsdPriceFeed.getAddress();
+        const pokemonDollarAddress = await pokemonDollar.getAddress();
+        const dSCEngineAddress = await dSCEngine.getAddress();
       });
 
       // // TODO fix reverts errors for constructor test
@@ -139,7 +167,38 @@ import {
         });
 
         // test below need own setup
-        it("", async () => {});
+        it("reverts with unapproved collateral", async () => {
+          // deploy mock token
+          const ranToken = await (
+            await ethers.getContractFactory("WethMock", deployer)
+          ).deploy("RAN", "RAN", user, amountCollateral);
+          // get token address
+          const ranTokenAddress = await ranToken.getAddress();
+          await expect(
+            dSCEngine.depositCollateral(ranTokenAddress, amountCollateral)
+          ).to.be.revertedWithCustomError(
+            dSCEngine,
+            "DSCEngine__NotAllowedToken"
+          );
+        });
+
+        //TODO: fix assertionError
+        it("can deposit coallateral and get account info", async () => {
+          //run modifier function
+          depositCollateral(weth, weth, dSCEngine, amountCollateral);
+
+          const [totalPdMinted, collateralValueInUsd] =
+            await dSCEngine.getAccountInformation(user);
+          // console.log(totalPdMinted);
+          // console.log(collateralValueInUsd);
+
+          const expectedDepositAmount = await dSCEngine.getTokenAmountFromUsd(
+            weth,
+            collateralValueInUsd
+          );
+          assert.equal(totalPdMinted, 0n);
+          assert.equal(expectedDepositAmount, amountCollateral);
+        });
       });
 
       describe("reverts if collateral is zero", () => {
