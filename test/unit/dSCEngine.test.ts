@@ -48,10 +48,13 @@ import {
         weth: WethMock,
         wethAddress: any,
         dSCEngineAddress: any,
-        amountCollateral: bigint
+        amountCollateral: bigint,
+        user: SignerWithAddress
       ) => {
-        await weth.approve(dSCEngineAddress, amountCollateral);
-        dSCEngine.depositCollateral(wethAddress, amountCollateral);
+        await weth.connect(user).approve(dSCEngineAddress, amountCollateral);
+        await dSCEngine
+          .connect(user)
+          .depositCollateral(wethAddress, amountCollateral);
       };
 
       beforeEach(async () => {
@@ -67,6 +70,7 @@ import {
         wbtc = await ethers.getContract("WbtcMock");
 
         await weth.mint(user, STARTING_USER_BALANCE);
+        await wbtc.mint(user, STARTING_USER_BALANCE);
 
         //get addresses here
         const wbtcAddress = await wbtc.getAddress();
@@ -182,10 +186,16 @@ import {
           );
         });
 
-        //TODO: fix assertionError
         it("can deposit coallateral and get account info", async () => {
           //run modifier function
-          depositCollateral(weth, weth, dSCEngine, amountCollateral);
+          const tx = await depositCollateral(
+            weth,
+            weth,
+            dSCEngine,
+            amountCollateral,
+            user
+          );
+          console.log(tx);
 
           const [totalPdMinted, collateralValueInUsd] =
             await dSCEngine.getAccountInformation(user);
