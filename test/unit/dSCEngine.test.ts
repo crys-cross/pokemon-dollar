@@ -211,7 +211,9 @@ import {
         });
       });
 
-      describe("reverts if collateral is zero", () => {
+      describe("depositCollateralAndMintPd", () => {
+        it("reverts if minted PD breaks health factor", async () => {});
+
         it("", async () => {});
       });
 

@@ -335,7 +335,7 @@ contract DSCEngine is ReentrancyGuard {
         collateralValueInUsd = getAccountCollateralValue(_user);
     }
 
-    function calculateHealthFactor(
+    function __calculateHealthFactor(
         uint256 _totalDscMinted,
         uint256 _collateralValueInUsd
     ) internal pure returns (uint256) {
@@ -360,7 +360,7 @@ contract DSCEngine is ReentrancyGuard {
             uint256 totalDscMinted,
             uint256 collateralValueInUsd
         ) = __getAccountInformation(_user);
-        return calculateHealthFactor(totalDscMinted, collateralValueInUsd);
+        return __calculateHealthFactor(totalDscMinted, collateralValueInUsd);
     }
 
     function _getUsdValue(
