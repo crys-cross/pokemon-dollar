@@ -16,6 +16,7 @@ import {
 } from "../../typechain-types";
 // reference:
 // https://hardhat.org/hardhat-chai-matchers/docs/overview
+// https://github.com/smartcontractkit/full-blockchain-solidity-course-js
 
 !developmentChains.includes(network.name)
   ? describe.skip
@@ -212,7 +213,14 @@ import {
       });
 
       describe("depositCollateralAndMintPd", () => {
-        it("reverts if minted PD breaks health factor", async () => {});
+        it("reverts if minted PD breaks health factor", async () => {
+          // const price = ethUsdPriceFeed.latestRoundData();
+          // // TODO: convert to same types
+          // const amountToMint =
+          //   (amountCollateral *
+          //     (price * dSCEngine.getAdditionalFeedPrecision())) /
+          //   dSCEngine.getPrecision();
+        });
 
         it("", async () => {});
       });

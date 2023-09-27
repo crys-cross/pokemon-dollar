@@ -386,9 +386,9 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-    //////////////////////////////////////
-    // Public & External View Functions //
-    //////////////////////////////////////
+    /////////////////////////////////////////////
+    // Public & External View & Pure Functions //
+    /////////////////////////////////////////////
 
     function getAccountCollateralValue(
         address _user
@@ -432,5 +432,13 @@ contract DSCEngine is ReentrancyGuard {
         returns (uint256 totalPdMinted, uint256 collateralValueinUsd)
     {
         (totalPdMinted, collateralValueinUsd) = __getAccountInformation(user);
+    }
+
+    function getPrecision() external pure returns (uint256) {
+        return PRECISION;
+    }
+
+    function getAdditionalFeedPrecision() external pure returns (uint256) {
+        return ADDITIONAL_FEED_PRECISION;
     }
 }
